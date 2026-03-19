@@ -5,8 +5,8 @@
   "manifest_version": 3,
   "permissions": ["storage", "scripting", "activeTab"],
   "action": {
-    "default_popup": "hello.html",
-    "default_icon": "hello_extensions.png"
+    "default_popup": "scroll.html",
+    "default_icon": "scroll_extension.png"
   },
   "content_scripts": [
     {
