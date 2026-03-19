@@ -4,7 +4,7 @@ if (!window.__autoScrollExtensionLoaded) {
   let enabled = false;
   let scrollSpeed = 0;
   let scrollTimer = null;
-  const SCROLL_STEP = 2;
+  const SCROLL_STEP = 0.6;
 
   function startAutoScroll(speed) {
     scrollSpeed = speed;
