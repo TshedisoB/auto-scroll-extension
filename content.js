@@ -6,6 +6,33 @@ if (!window.__autoScrollExtensionLoaded) {
   let scrollTimer = null;
   const SCROLL_STEP = 0.6;
 
+  const RIGHT_CLICK_SEQUENCE_END_MS = 500;
+  let rightClickCount = 0;
+  let rightClickSequenceTimer = null;
+
+  function clearRightClickSequenceTimer() {
+    if (rightClickSequenceTimer !== null) {
+      window.clearTimeout(rightClickSequenceTimer);
+      rightClickSequenceTimer = null;
+    }
+  }
+
+  function applyRightClickSequence() {
+    rightClickSequenceTimer = null;
+    const n = rightClickCount;
+    rightClickCount = 0;
+    if (!enabled) {
+      return;
+    }
+    if (n === 1) {
+      stopAutoScroll();
+    } else if (n === 2) {
+      startAutoScroll(SCROLL_STEP);
+    } else if (n >= 3) {
+      startAutoScroll(-SCROLL_STEP);
+    }
+  }
+
   function startAutoScroll(speed) {
     scrollSpeed = speed;
     if (scrollTimer !== null) {
@@ -33,6 +60,8 @@ if (!window.__autoScrollExtensionLoaded) {
     enabled = Boolean(value);
     if (!enabled) {
       stopAutoScroll();
+      clearRightClickSequenceTimer();
+      rightClickCount = 0;
     }
   }
 
@@ -74,6 +103,34 @@ if (!window.__autoScrollExtensionLoaded) {
       }
 
       stopAutoScroll();
+    },
+    true
+  );
+
+  window.addEventListener(
+    "mousedown",
+    (event) => {
+      if (!enabled || event.button !== 2) {
+        return;
+      }
+      event.preventDefault();
+      rightClickCount += 1;
+      clearRightClickSequenceTimer();
+      rightClickSequenceTimer = window.setTimeout(
+        applyRightClickSequence,
+        RIGHT_CLICK_SEQUENCE_END_MS
+      );
+    },
+    true
+  );
+
+  window.addEventListener(
+    "contextmenu",
+    (event) => {
+      if (!enabled) {
+        return;
+      }
+      event.preventDefault();
     },
     true
   );
